@@ -13,6 +13,6 @@ XADE will be the exchange provider for DeriveX. We aim at creating the world's b
 - Bhavishya Garg (@bhavishyag2)
 - Emmanuel Ozeh (@Eke-Manuel)
 - Arnav Jhajharia (@Arnav-Jhajharia)
-- Arav Budhiraja (arav06)
+- Arav Budhiraja (@arav06)
 
 ***
