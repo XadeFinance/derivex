@@ -1,0 +1,39 @@
+{
+    "compilerOptions": {
+        "outDir": "./build",
+        "composite": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "lib": ["esnext"],
+        "module": "commonjs",
+        "sourceMap": true,
+        "target": "esnext",
+        "declaration": true,
+        "declarationMap": true,
+        "strict": true,
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+    },
+    "include": [
+        "./tests/**/*",
+        "./scripts/**/*",
+        "./publish/*.ts",
+        "./publish/**/*.ts",
+        "./publish/settings/*.json",
+        "./ethereum.json",
+        "./types/**/*.ts"
+    ],
+    "files": [
+        "./hardhat.config.ts",
+        "./index.d.ts",
+        "./node_modules/@nomiclabs/hardhat-web3/type-extensions.d.ts",
+        "./node_modules/@nomiclabs/hardhat-truffle5/src/type-extensions.d.ts",
+        "./node_modules/@nomiclabs/hardhat-waffle/src/type-extensions.d.ts",
+        "./node_modules/@nomiclabs/hardhat-ethers/src/type-extensions.d.ts",
+        "./node_modules/@openzeppelin/hardhat-upgrades/src/type-extensions.d.ts",
+        "./constants.ts"
+    ]
+}
