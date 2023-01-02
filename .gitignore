@@ -5,6 +5,7 @@ coverage
 .idea
 doc
 .DS_Store
+*.log
 .env
 .serverless
 .openzeppelin/mainnet.json
