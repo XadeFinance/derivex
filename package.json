@@ -104,6 +104,6 @@
     },
     "dependencies": {
         "@openzeppelin/contracts": "^3.4.2",
-        "redstone-evm-connector": "^2.1.25"
+        "redstone-evm-connector": "^2.1.26"
     }
 }
