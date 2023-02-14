@@ -59,7 +59,7 @@ contract FeePool is
     // FUNCTIONS
     //
 
-    function initialize() external initializer {
+    function initialize() public initializer {
         __Ownable_init();
         __ReentrancyGuard_init();
     }
