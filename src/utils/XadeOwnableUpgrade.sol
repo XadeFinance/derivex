@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.6.9;
 
-import { ContextUpgradeSafe } from "./OpenZeppelin/ContextUpgradeSafe.sol";
+import { ContextUpgradeSafe } from "@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol";
 
 // copy from PerpFiOwnableUpgrade, only modify naming
 /**
@@ -26,12 +26,12 @@ contract XadeOwnableUpgrade is ContextUpgradeSafe {
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
 
-    function __Ownable_init() internal onlyInitializing {
+    function __Ownable_init() internal initializer {
         __Context_init_unchained();
         __Ownable_init_unchained();
     }
 
-    function __Ownable_init_unchained() internal onlyInitializing {
+    function __Ownable_init_unchained() internal initializer {
         address msgSender = _msgSender();
         _owner = msgSender;
         emit OwnershipTransferred(address(0), msgSender);
