@@ -10,20 +10,13 @@ import {
 } from "@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol";
 import { IERC20 } from "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import { Decimal } from "./utils/Decimal.sol";
-import { BlockContext } from "./utils/BlockContext.sol";
 import { DecimalERC20 } from "./utils/DecimalERC20.sol";
 import { AddressArray } from "./utils/AddressArray.sol";
 import { IInsuranceFund } from "./interface/IInsuranceFund.sol";
 import { IInflationMonitor } from "./interface/IInflationMonitor.sol";
 import { IMultiTokenRewardRecipient } from "./interface/IMultiTokenRewardRecipient.sol";
 
-contract FeePool is
-    XadeOwnableUpgrade,
-    BlockContext,
-    ReentrancyGuardUpgradeSafe,
-    DecimalERC20,
-    IMultiTokenRewardRecipient
-{
+contract FeePool is XadeOwnableUpgrade, ReentrancyGuardUpgradeSafe, DecimalERC20, IMultiTokenRewardRecipient {
     using Decimal for Decimal.decimal;
     using AddressArray for address[];
 
