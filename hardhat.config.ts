@@ -16,8 +16,12 @@ import {
     COVERAGE_URL,
     ETHERSCAN_API_KEY,
     GAS_PRICE,
-    RINKEBY_MNEMONIC,
-    RINKEBY_URL,
+    MUMBAI_MNEMONIC,
+    MUMBAI_URL,
+    POLYGONPoS_MNEMONIC,
+    POLYGONPoS_URL,
+    ALFAJORES_MNEMONIC,
+    ALFAJORES_URL,
     ROOT_DIR,
     SRC_DIR,
 } from "./constants"
@@ -30,11 +34,25 @@ const config: HardhatUserConfig = {
         coverage: {
             url: COVERAGE_URL,
         },
-        rinkeby: {
-            url: RINKEBY_URL,
+        PolygonPoS: {
+            url: POLYGONPoS_URL,
             gasPrice: GAS_PRICE,
             accounts: {
-                mnemonic: RINKEBY_MNEMONIC,
+                mnemonic: POLYGONPoS_MNEMONIC,
+            },
+        },
+        Mumbai: {
+            url: MUMBAI_URL,
+            gasPrice: GAS_PRICE,
+            accounts: {
+                mnemonic: MUMBAI_MNEMONIC,
+            },
+        },
+        Alfajores: {
+            url: ALFAJORES_URL,
+            gasPrice: GAS_PRICE,
+            accounts: {
+                mnemonic: ALFAJORES_MNEMONIC,
             },
         },
     },
@@ -44,7 +62,7 @@ const config: HardhatUserConfig = {
             {
               version: "0.6.9"
             },
-          ],
+        ],
         settings: {
             optimizer: { enabled: true, runs: 200 },
             evmVersion: "istanbul",
