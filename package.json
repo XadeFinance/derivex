@@ -34,7 +34,7 @@
         "@nomiclabs/hardhat-web3": "2.0.0",
         "@opengsn/gsn": "2.0.3",
         "@openzeppelin/contracts-ethereum-package": "3.0.0",
-        "@openzeppelin/hardhat-upgrades": "1.6.0",
+        "@openzeppelin/hardhat-upgrades": "1.22.0",
         "@openzeppelin/test-helpers": "0.5.5",
         "@openzeppelin/upgrades": "2.8.0",
         "@testdeck/mocha": "0.1.0",
