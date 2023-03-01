@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 
 import "../utils/XadeOwnableUpgrade.sol";
 
-contract PerpFiOwnableUpgradeFake is XadeOwnableUpgrade {
+contract XadeOwnableUpgradeFake is XadeOwnableUpgrade {
     constructor() public {}
 
     function initialize() public {

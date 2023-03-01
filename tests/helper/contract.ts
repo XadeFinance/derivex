@@ -1,14 +1,12 @@
 import BN from "bn.js"
 import { artifacts, web3 } from "hardhat"
 import {
-    CUsdtMockContract,
-    CUsdtMockInstance,
     ERC20FakeContract,
     ERC20FakeInstance,
+    InsuranceFundFakeContract,
+    InsuranceFundFakeInstance,
     PriceFeedL2FakeContract,
     PriceFeedL2FakeInstance,
-    L2PriceFeedMockContract,
-    L2PriceFeedMockInstance,
     RedstonePriceFeedContract,
     RedstonePriceFeedInstance,
     TollPoolContract,
@@ -16,11 +14,10 @@ import {
 } from "../../types/truffle-contracts"
 import { Decimal, toFullDigit } from "./number"
 
-const L2PriceFeedMock = artifacts.require("L2PriceFeedMock") as L2PriceFeedMockContract
 const ERC20Fake = artifacts.require("ERC20Fake") as ERC20FakeContract
+const InsuranceFundFake = artifacts.require("InsuranceFundFake") as InsuranceFundFakeContract
 const PriceFeedL2Fake = artifacts.require("PriceFeedL2Fake") as PriceFeedL2FakeContract
 const RedstonePriceFeed = artifacts.require("RedstonePriceFeed") as RedstonePriceFeedContract
-const CUsdtMock = artifacts.require("CUsdtMock") as CUsdtMockContract
 const TollPool = artifacts.require("TollPool") as TollPoolContract
 
 
@@ -37,7 +34,7 @@ export async function deployErc20Fake(
 
 export async function deployInsuranceFund(): 
 Promise<InsuranceFundFakeInstance> {
-    const instance = await InsuranceFund.new()
+    const instance = await InsuranceFundFake.new()
     await instance.initialize()
     return instance
 }

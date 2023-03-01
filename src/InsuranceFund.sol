@@ -38,7 +38,7 @@ contract InsuranceFund is IInsuranceFund, XadeOwnableUpgrade, BlockContext, Reen
     IERC20[] public quoteTokens;
 
     // contract dependencies
-    IMultiTokenRewardRecipient private feePool;
+    IMultiTokenRewardRecipient private tollPool;
     IExchangeWrapper public exchange;
     IInflationMonitor public inflationMonitor;
     address private beneficiary;
@@ -266,9 +266,9 @@ contract InsuranceFund is IInsuranceFund, XadeOwnableUpgrade, BlockContext, Reen
             _requiredQuoteAmount = _requiredQuoteAmount.subD(swappedQuoteToken);
         }
 
-        // if all the quote tokens can't afford the debt, withdraw from feePool
+        // if all the quote tokens can't afford the debt, withdraw from tollPool
         if (_requiredQuoteAmount.toUint() > 0) {
-            feePool.withdrawToInsuranceFund(_quoteToken, _requiredQuoteAmount);
+            tollPool.withdrawToInsuranceFund(_quoteToken, _requiredQuoteAmount);
         }
     }
 

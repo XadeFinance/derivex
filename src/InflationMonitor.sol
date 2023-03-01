@@ -37,7 +37,7 @@ contract InflationMonitor is IInflationMonitor, XadeOwnableUpgrade, BlockContext
      */
     Decimal.decimal public shutdownThreshold;
 
-    IMultiTokenRewardRecipient private feePool;
+    IMultiTokenRewardRecipient private tollPool;
 
     uint256[50] private __gap;
 
@@ -49,10 +49,10 @@ contract InflationMonitor is IInflationMonitor, XadeOwnableUpgrade, BlockContext
 
     //◢◣◢◣◢◣◢◣◢◣◢◣◢◣◢◣ add state variables above ◢◣◢◣◢◣◢◣◢◣◢◣◢◣◢◣//
 
-    function initialize(IMultiTokenRewardRecipient _feePool) public initializer {
+    function initialize(IMultiTokenRewardRecipient _tollPool) public initializer {
         __Ownable_init();
 
-        feePool = _feePool;
+        tollPool = _tollPool;
         shutdownThreshold = Decimal.one().divScalar(10);
     }
 
@@ -61,7 +61,7 @@ contract InflationMonitor is IInflationMonitor, XadeOwnableUpgrade, BlockContext
     }
 
     function appendToWithdrawalHistory(Decimal.decimal calldata _amount) external override {
-        require(_msgSender() == address(feePool), "!feePool");
+        require(_msgSender() == address(tollPool), "!tollPool");
         Decimal.decimal memory cumulativeAmount;
         uint256 len = withdrawalHistory.length;
         if (len == 0) {
@@ -102,7 +102,7 @@ contract InflationMonitor is IInflationMonitor, XadeOwnableUpgrade, BlockContext
         if (shutdownThreshold.toUint() == 0) {
             return false;
         }
-        Decimal.decimal memory poolBalance = feePool.poolBalance();
+        Decimal.decimal memory poolBalance = tollPool.poolBalance();
         Decimal.decimal memory withdrawn = withdrawnAmountDuringThresholdPeriod();
         return withdrawn.divD(poolBalance).cmp(shutdownThreshold) >= 0;
     }

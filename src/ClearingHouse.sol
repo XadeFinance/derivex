@@ -203,7 +203,7 @@ contract ClearingHouse is
 
     // contract dependencies
     IInsuranceFund public insuranceFund;
-    IMultiTokenRewardRecipient public feePool;
+    IMultiTokenRewardRecipient public tollPool;
 
     // designed for arbitragers who can hold unlimited positions. will be removed after guarded period
     address internal whitelist;
@@ -251,7 +251,7 @@ contract ClearingHouse is
         maintenanceMarginRatio = Decimal.decimal(_maintenanceMarginRatio);
         liquidationFeeRatio = Decimal.decimal(_liquidationFeeRatio);
         insuranceFund = _insuranceFund;
-        feePool = _tollPool;
+        tollPool = _tollPool;
         //trustedForwarder = _trustedForwarder;
     }
 
@@ -283,8 +283,8 @@ contract ClearingHouse is
      * @notice set the toll pool address
      * @dev only owner can call
      */
-    function setTollPool(address _feePool) external onlyOwner {
-        feePool = IMultiTokenRewardRecipient(_feePool);
+    function setTollPool(address _tollPool) external onlyOwner {
+        tollPool = IMultiTokenRewardRecipient(_tollPool);
     }
 
     /**
@@ -1243,11 +1243,11 @@ contract ClearingHouse is
                 _transferFrom(quoteAsset, _from, address(insuranceFund), spread);
             }
 
-            // transfer toll to feePool
+            // transfer toll to tollPool
             if (hasToll) {
-                require(address(feePool) != address(0), "Invalid feePool");
-                feePool.notifyTokenAmount(quoteAsset, toll);
-                _transferFrom(quoteAsset, _from, address(feePool), toll);
+                require(address(tollPool) != address(0), "Invalid tollPool");
+                tollPool.notifyTokenAmount(quoteAsset, toll);
+                _transferFrom(quoteAsset, _from, address(tollPool), toll);
             }
 
             // fee = spread + toll

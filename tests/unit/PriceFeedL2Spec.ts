@@ -144,7 +144,7 @@ describe("PriceFeedL2 Spec", () => {
         it("force error, timestamp should be larger", async () => {
             await PriceFeedL2.setLatestData(toBytes32("ETH"), toFullDigit(400), 1000)
             await expectRevert(
-                PriceFeedL2.setLatestData(toBytes32("ETH"), toFullDigit(400), 999, 101),
+                PriceFeedL2.setLatestData(toBytes32("ETH"), toFullDigit(400), 999),
                 "incorrect timestamp",
             )
         })

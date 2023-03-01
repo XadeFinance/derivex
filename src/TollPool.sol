@@ -16,7 +16,7 @@ import { IInsuranceFund } from "./interface/IInsuranceFund.sol";
 import { IInflationMonitor } from "./interface/IInflationMonitor.sol";
 import { IMultiTokenRewardRecipient } from "./interface/IMultiTokenRewardRecipient.sol";
 
-contract FeePool is XadeOwnableUpgrade, ReentrancyGuardUpgradeSafe, DecimalERC20, IMultiTokenRewardRecipient {
+contract TollPool is XadeOwnableUpgrade, ReentrancyGuardUpgradeSafe, DecimalERC20, IMultiTokenRewardRecipient {
     using Decimal for Decimal.decimal;
     using AddressArray for address[];
 
@@ -26,7 +26,7 @@ contract FeePool is XadeOwnableUpgrade, ReentrancyGuardUpgradeSafe, DecimalERC20
     event Withdrawn(address withdrawer, IERC20 token, uint256 amount);
     event FeeTokenAdded(address tokenAddress);
     event FeeTokenRemoved(address tokenAddress);
-    event FeePoolOperatorSet(address feePoolOperator);
+    event TollPoolOperatorSet(address tollPoolOperator);
 
     //**********************************************************//
     //    The below state variables can not change the order    //
@@ -37,7 +37,7 @@ contract FeePool is XadeOwnableUpgrade, ReentrancyGuardUpgradeSafe, DecimalERC20
     // contract dependencies
     IInsuranceFund public InsuranceFund;
     IInflationMonitor public inflationMonitor;
-    address public feePoolOperator;
+    address public tollPoolOperator;
 
     //**********************************************************//
     //    The above state variables can not change the order    //
@@ -64,8 +64,8 @@ contract FeePool is XadeOwnableUpgrade, ReentrancyGuardUpgradeSafe, DecimalERC20
         }
     }
 
-    function transferToFeePoolOperator() external {
-        require(address(feePoolOperator) != address(0), "feePoolOperator not yet set");
+    function transferToTollPoolOperator() external onlyOwner {
+        require(address(tollPoolOperator) != address(0), "tollPoolOperator not yet set");
         require(feeTokens.length != 0, "feeTokens not set yet");
 
         bool hasToll;
@@ -98,7 +98,7 @@ contract FeePool is XadeOwnableUpgrade, ReentrancyGuardUpgradeSafe, DecimalERC20
     function withdraw(IERC20 _token, Decimal.decimal calldata _amount) external onlyOwner {
         require(isFeeTokenExisted(_token), "Asset not avalible");
 
-        _transfer(_token, address(feePoolOperator), _amount);
+        _transfer(_token, address(tollPoolOperator), _amount);
         emit Withdrawn(_msgSender(), _token, _amount.toUint());
     }
 
@@ -129,11 +129,11 @@ contract FeePool is XadeOwnableUpgrade, ReentrancyGuardUpgradeSafe, DecimalERC20
         inflationMonitor = _inflationMonitor;
     }
 
-    function setFeePoolOperator(address _feePoolOperator) external onlyOwner {
-        require(_feePoolOperator != address(0), "invalid input");
-        require(_feePoolOperator != feePoolOperator, "input is the same as the current one");
-        feePoolOperator = _feePoolOperator;
-        emit FeePoolOperatorSet(_feePoolOperator);
+    function setTollPoolOperator(address _tollPoolOperator) external onlyOwner {
+        require(_tollPoolOperator != address(0), "invalid input");
+        require(_tollPoolOperator != tollPoolOperator, "input is the same as the current one");
+        tollPoolOperator = _tollPoolOperator;
+        emit TollPoolOperatorSet(_tollPoolOperator);
     }
 
     // INTERNAL FUNCTIONS
@@ -141,8 +141,8 @@ contract FeePool is XadeOwnableUpgrade, ReentrancyGuardUpgradeSafe, DecimalERC20
     function _transferToOperator(IERC20 _token) private returns (bool) {
         Decimal.decimal memory balance = _balanceOf(_token, address(this));
         if (balance.toUint() != 0) {
-            _transfer(_token, address(feePoolOperator), balance);
-            emit Withdrawn(address(feePoolOperator), _token, balance.toUint());
+            _transfer(_token, address(tollPoolOperator), balance);
+            emit Withdrawn(address(tollPoolOperator), _token, balance.toUint());
             return true;
         }
         return false;

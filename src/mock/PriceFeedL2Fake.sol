@@ -2,7 +2,7 @@
 pragma solidity 0.6.9;
 import { PriceFeedL2 } from "../PriceFeedL2.sol";
 
-contract L2PriceFeedFake is PriceFeedL2 {
+contract PriceFeedL2Fake is PriceFeedL2 {
     uint256 private timestamp = 1444004400;
     uint256 private number = 10001;
 
