@@ -1,0 +1,939 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xA27DdDd809Bd0333b9AA71d93Afcf5DBF6394ABD",
+    "txHash": "0x37fd8a7826cae16f7a8f898bc7759fb2f60747a12a1d557a7dddf1bf01f0f5a8"
+  },
+  "proxies": [
+    {
+      "address": "0x8fcd22A875217890e3df2a68E5D56f333506eef4",
+      "txHash": "0xfc4967e8bad30a63be8de965d4603f94b64c07dbedbc782035d632fb91e5ad70",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x4Be34b83DfCa5e05Ec6E6E4C1aD19A6F92E164FA",
+      "txHash": "0xefda2d912be00052a6e04700d95fac9258542bf171d058f33c30ca4b7e00a086",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x338B63A94C5d8c6732266F06d09Ea54Cc630EB07",
+      "txHash": "0x82c4786c602bf538ccd04c90334595eeba677578f1ad16c9d1da50d6e99141ac",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xb6616b4e725116f2e4269A602733883eeD362FB2",
+      "txHash": "0x6c42f81ae82ede2ba54fc55a0d07c43f21ad37cb579523ccbc9141c9960e704f",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x949B5ff303EA7D3A5a11D7092c9cF2a9b5323fE1",
+      "txHash": "0xae2327968f6cb0d9169cb676c2f5bf1100b8fd84f56254215267cc1d40429c03",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "b542a5f8bce2913db60e57ce1ed4fa7486b6144d7218fe89069735eee5ab664c": {
+      "address": "0xAF84Ad9718c9F7230897d0B297aE3130Ec920d1b",
+      "txHash": "0x72b80d76e8a2ce2344bfa9e6e0c50c79b6aaa724c177a7d5113291851070a2f2",
+      "layout": {
+        "solcVersion": "0.6.9",
+        "storage": [
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "BlockContext",
+            "src": "src\\utils\\BlockContext.sol:13"
+          },
+          {
+            "label": "initialized",
+            "offset": 0,
+            "slot": "50",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:21"
+          },
+          {
+            "label": "initializing",
+            "offset": 1,
+            "slot": "50",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:26"
+          },
+          {
+            "label": "______gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeSafe",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\GSN\\Context.sol:37"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:20"
+          },
+          {
+            "label": "_candidate",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_address",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:95"
+          },
+          {
+            "label": "priceFeedMap",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_mapping(t_bytes32,t_struct(PriceFeed)13424_storage)",
+            "contract": "PriceFeedL2",
+            "src": "src\\PriceFeedL2.sol:36"
+          },
+          {
+            "label": "priceFeedKeys",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_array(t_bytes32)dyn_storage",
+            "contract": "PriceFeedL2",
+            "src": "src\\PriceFeedL2.sol:37"
+          },
+          {
+            "label": "oracle",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_address",
+            "contract": "PriceFeedL2",
+            "src": "src\\PriceFeedL2.sol:39"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "PriceFeedL2",
+            "src": "src\\PriceFeedL2.sol:54"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(PriceData)13418_storage)dyn_storage": {
+            "label": "struct PriceFeedL2.PriceData[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(PriceFeed)13424_storage)": {
+            "label": "mapping(bytes32 => struct PriceFeedL2.PriceFeed)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(PriceData)13418_storage": {
+            "label": "struct PriceFeedL2.PriceData",
+            "members": [
+              {
+                "label": "price",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(PriceFeed)13424_storage": {
+            "label": "struct PriceFeedL2.PriceFeed",
+            "members": [
+              {
+                "label": "registered",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "priceData",
+                "type": "t_array(t_struct(PriceData)13418_storage)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        }
+      }
+    },
+    "ebb1fe31519556503f12d0dff9ff9678549d4fe56c40a704e7f7e5ada6db290c": {
+      "address": "0x5Cd7E6b3FA2CC74eB279ab7E49E70409E9722C8b",
+      "txHash": "0xfbbcd3439cdf89192877096970c0145604fb753c8acd5bf8b39d848139e4ade3",
+      "layout": {
+        "solcVersion": "0.6.9",
+        "storage": [
+          {
+            "label": "initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:21"
+          },
+          {
+            "label": "initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:26"
+          },
+          {
+            "label": "______gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeSafe",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\GSN\\Context.sol:37"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:20"
+          },
+          {
+            "label": "_candidate",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_address",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:95"
+          },
+          {
+            "label": "_notEntered",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_bool",
+            "contract": "ReentrancyGuardUpgradeSafe",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\utils\\ReentrancyGuard.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeSafe",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\utils\\ReentrancyGuard.sol:63"
+          },
+          {
+            "label": "decimalMap",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "DecimalERC20",
+            "src": "src\\utils\\DecimalERC20.sol:12"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "DecimalERC20",
+            "src": "src\\utils\\DecimalERC20.sol:23"
+          },
+          {
+            "label": "feeTokenMap",
+            "offset": 0,
+            "slot": "254",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "FeePool",
+            "src": "src\\FeePool.sol:34"
+          },
+          {
+            "label": "feeTokens",
+            "offset": 0,
+            "slot": "255",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "FeePool",
+            "src": "src\\FeePool.sol:35"
+          },
+          {
+            "label": "InsuranceFund",
+            "offset": 0,
+            "slot": "256",
+            "type": "t_contract(IInsuranceFund)16451",
+            "contract": "FeePool",
+            "src": "src\\FeePool.sol:38"
+          },
+          {
+            "label": "inflationMonitor",
+            "offset": 0,
+            "slot": "257",
+            "type": "t_contract(IInflationMonitor)16421",
+            "contract": "FeePool",
+            "src": "src\\FeePool.sol:39"
+          },
+          {
+            "label": "feePoolOperator",
+            "offset": 0,
+            "slot": "258",
+            "type": "t_address",
+            "contract": "FeePool",
+            "src": "src\\FeePool.sol:40"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "259",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "FeePool",
+            "src": "src\\FeePool.sol:56"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IInflationMonitor)16421": {
+            "label": "contract IInflationMonitor",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IInsuranceFund)16451": {
+            "label": "contract IInsuranceFund",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        }
+      }
+    },
+    "f5ab0fb3c7588a9a68a5808ff9e062e92dbe3bf4be14d34e1e3bdf79b8f01238": {
+      "address": "0xD5606b23Acaa53310E37724F6e6E83308A783975",
+      "txHash": "0x4af250696f3902393ac4034fb75f0d02c6e29fe54af1038451daeb1c7e7aed53",
+      "layout": {
+        "solcVersion": "0.6.9",
+        "storage": [
+          {
+            "label": "initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:21"
+          },
+          {
+            "label": "initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:26"
+          },
+          {
+            "label": "______gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeSafe",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\GSN\\Context.sol:37"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:20"
+          },
+          {
+            "label": "_candidate",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_address",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:95"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "BlockContext",
+            "src": "src\\utils\\BlockContext.sol:13"
+          },
+          {
+            "label": "_notEntered",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_bool",
+            "contract": "ReentrancyGuardUpgradeSafe",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\utils\\ReentrancyGuard.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeSafe",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\utils\\ReentrancyGuard.sol:63"
+          },
+          {
+            "label": "decimalMap",
+            "offset": 0,
+            "slot": "253",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "DecimalERC20",
+            "src": "src\\utils\\DecimalERC20.sol:12"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "254",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "DecimalERC20",
+            "src": "src\\utils\\DecimalERC20.sol:23"
+          },
+          {
+            "label": "ammMap",
+            "offset": 0,
+            "slot": "304",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "InsuranceFund",
+            "src": "src\\InsuranceFund.sol:35"
+          },
+          {
+            "label": "quoteTokenMap",
+            "offset": 0,
+            "slot": "305",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "InsuranceFund",
+            "src": "src\\InsuranceFund.sol:36"
+          },
+          {
+            "label": "amms",
+            "offset": 0,
+            "slot": "306",
+            "type": "t_array(t_contract(IAmm)16241)dyn_storage",
+            "contract": "InsuranceFund",
+            "src": "src\\InsuranceFund.sol:37"
+          },
+          {
+            "label": "quoteTokens",
+            "offset": 0,
+            "slot": "307",
+            "type": "t_array(t_contract(IERC20)1878)dyn_storage",
+            "contract": "InsuranceFund",
+            "src": "src\\InsuranceFund.sol:38"
+          },
+          {
+            "label": "feePool",
+            "offset": 0,
+            "slot": "308",
+            "type": "t_contract(IMultiTokenRewardRecipient)16478",
+            "contract": "InsuranceFund",
+            "src": "src\\InsuranceFund.sol:41"
+          },
+          {
+            "label": "exchange",
+            "offset": 0,
+            "slot": "309",
+            "type": "t_contract(IExchangeWrapper)16405",
+            "contract": "InsuranceFund",
+            "src": "src\\InsuranceFund.sol:42"
+          },
+          {
+            "label": "inflationMonitor",
+            "offset": 0,
+            "slot": "310",
+            "type": "t_contract(IInflationMonitor)16421",
+            "contract": "InsuranceFund",
+            "src": "src\\InsuranceFund.sol:43"
+          },
+          {
+            "label": "beneficiary",
+            "offset": 0,
+            "slot": "311",
+            "type": "t_address",
+            "contract": "InsuranceFund",
+            "src": "src\\InsuranceFund.sol:44"
+          },
+          {
+            "label": "cUSD",
+            "offset": 0,
+            "slot": "312",
+            "type": "t_contract(IERC20)1878",
+            "contract": "InsuranceFund",
+            "src": "src\\InsuranceFund.sol:45"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "313",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "InsuranceFund",
+            "src": "src\\InsuranceFund.sol:61"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_contract(IAmm)16241)dyn_storage": {
+            "label": "contract IAmm[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_contract(IERC20)1878)dyn_storage": {
+            "label": "contract IERC20[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IAmm)16241": {
+            "label": "contract IAmm",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)1878": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IExchangeWrapper)16405": {
+            "label": "contract IExchangeWrapper",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IInflationMonitor)16421": {
+            "label": "contract IInflationMonitor",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IMultiTokenRewardRecipient)16478": {
+            "label": "contract IMultiTokenRewardRecipient",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        }
+      }
+    },
+    "d301f672fe1eceead1e28c67a2b2868ce8306455360ac04816dd0ebd972f8361": {
+      "address": "0x26dAE7831E4D0c8829964e7d2a54982267102a5F",
+      "txHash": "0x83b0f94c8c727b7487f8d6a18bff610d1ed9a12a0084d6a0749f7fb9a8e653a1",
+      "layout": {
+        "solcVersion": "0.6.9",
+        "storage": [
+          {
+            "label": "initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:21"
+          },
+          {
+            "label": "initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:26"
+          },
+          {
+            "label": "______gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeSafe",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\GSN\\Context.sol:37"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:20"
+          },
+          {
+            "label": "_candidate",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_address",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:95"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "BlockContext",
+            "src": "src\\utils\\BlockContext.sol:13"
+          },
+          {
+            "label": "priceFeedMap",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_mapping(t_bytes32,t_contract(AggregatorV3Interface)45)",
+            "contract": "ChainlinkL1",
+            "src": "src\\ChainlinkPriceFeed.sol:26"
+          },
+          {
+            "label": "priceFeedKeys",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_array(t_bytes32)dyn_storage",
+            "contract": "ChainlinkL1",
+            "src": "src\\ChainlinkPriceFeed.sol:27"
+          },
+          {
+            "label": "priceFeedL2",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_contract(IPriceFeed)16531",
+            "contract": "ChainlinkL1",
+            "src": "src\\ChainlinkPriceFeed.sol:28"
+          },
+          {
+            "label": "prevTimestampMap",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "contract": "ChainlinkL1",
+            "src": "src\\ChainlinkPriceFeed.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "207",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ChainlinkL1",
+            "src": "src\\ChainlinkPriceFeed.sol:43"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(AggregatorV3Interface)45": {
+            "label": "contract AggregatorV3Interface",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPriceFeed)16531": {
+            "label": "contract IPriceFeed",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_bytes32,t_contract(AggregatorV3Interface)45)": {
+            "label": "mapping(bytes32 => contract AggregatorV3Interface)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        }
+      }
+    },
+    "e4b1c17a36cf71f271a3b0c5bce493e9193d9d35e5ac233a02497d63b437736d": {
+      "address": "0x3004a8a8f7D4b09615ec8D392cC9b07c2e7B7944",
+      "txHash": "0xd06430d480c6096d4e49a05ed585f884dac40e9e6892d099e398484c89cb7bdd",
+      "layout": {
+        "solcVersion": "0.6.9",
+        "storage": [
+          {
+            "label": "initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:21"
+          },
+          {
+            "label": "initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:26"
+          },
+          {
+            "label": "______gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\Initializable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeSafe",
+            "src": "@openzeppelin\\contracts-ethereum-package\\contracts\\GSN\\Context.sol:37"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:20"
+          },
+          {
+            "label": "_candidate",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_address",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "XadeOwnableUpgrade",
+            "src": "src\\utils\\XadeOwnableUpgrade.sol:95"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "LowLevelErrorMessage",
+            "src": "src\\utils\\LowLevelErrorMessage.sol:15"
+          },
+          {
+            "label": "domainSeperatorL1",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_bytes32",
+            "contract": "MetaTxGateway",
+            "src": "src\\MetaTxGateway.sol:53"
+          },
+          {
+            "label": "domainSeperatorL2",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_bytes32",
+            "contract": "MetaTxGateway",
+            "src": "src\\MetaTxGateway.sol:54"
+          },
+          {
+            "label": "nonces",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "MetaTxGateway",
+            "src": "src\\MetaTxGateway.sol:55"
+          },
+          {
+            "label": "whitelistMap",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "MetaTxGateway",
+            "src": "src\\MetaTxGateway.sol:58"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "207",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "MetaTxGateway",
+            "src": "src\\MetaTxGateway.sol:74"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        }
+      }
+    }
+  }
+}

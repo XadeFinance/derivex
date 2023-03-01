@@ -6,6 +6,7 @@ import "@openzeppelin/hardhat-upgrades"
 import "@typechain/hardhat"
 import "@typechain/ethers-v5"
 import "ethers"
+import "dotenv/config"
 // need to write a open zeppelin's proxyResolver if using any deployProxy in test case
 // https://github.com/cgewecke/eth-gas-reporter/blob/master/docs/advanced.md
 import "hardhat-gas-reporter"
@@ -34,26 +35,22 @@ const config: HardhatUserConfig = {
         coverage: {
             url: COVERAGE_URL,
         },
-        PolygonPoS: {
+        Mumbai: {
             url: POLYGONPoS_URL,
             gasPrice: GAS_PRICE,
-            accounts: {
-                mnemonic: POLYGONPoS_MNEMONIC,
-            },
+            accounts : [process.env.ALFA_PRIVATEKEY || ""],
         },
-        Mumbai: {
+        PolygonPoS: {
             url: MUMBAI_URL,
             gasPrice: GAS_PRICE,
             accounts: {
                 mnemonic: MUMBAI_MNEMONIC,
             },
         },
-        Alfajores: {
-            url: ALFAJORES_URL,
-            gasPrice: GAS_PRICE,
-            accounts: {
-                mnemonic: ALFAJORES_MNEMONIC,
-            },
+        alfajores: {
+            url: process.env.ALFA_INFURA_KEY,
+            gasPrice : GAS_PRICE,
+            accounts : [process.env.ALFA_PRIVATEKEY || ""]
         },
     },
     solidity: {
