@@ -3,7 +3,6 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import { BlockContext } from "./utils/BlockContext.sol";
-import { BaseRelayRecipient } from "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
 import { IERC20 } from "@openzeppelin/contracts-ethereum-package/contracts/token/ERC20/IERC20.sol";
 import { Decimal } from "./utils/Decimal.sol";
 import { SignedDecimal } from "./utils/SignedDecimal.sol";
@@ -17,16 +16,11 @@ import { OwnerPausableUpgradeSafe } from "./OwnerPausable.sol";
 import { IAmm } from "./interface/IAmm.sol";
 import { IInsuranceFund } from "./interface/IInsuranceFund.sol";
 import { IMultiTokenRewardRecipient } from "./interface/IMultiTokenRewardRecipient.sol";
+import { ICollateralMonitor } from "./interface/ICollateralMonitor.sol";
 
 // note BaseRelayRecipient must come after OwnerPausableUpgradeSafe so its _msgSender() takes precedence
 // (yes, the ordering is reversed comparing to Python)
-contract ClearingHouse is
-    DecimalERC20,
-    OwnerPausableUpgradeSafe,
-    ReentrancyGuardUpgradeSafe,
-    BlockContext,
-    BaseRelayRecipient
-{
+contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuardUpgradeSafe, BlockContext {
     using Decimal for Decimal.decimal;
     using SignedDecimal for SignedDecimal.signedDecimal;
     using MixedDecimal for SignedDecimal.signedDecimal;
@@ -95,8 +89,6 @@ contract ClearingHouse is
         address liquidator,
         uint256 badDebt
     );
-
-    event ReferredPositionChanged(bytes32 indexed referralCode);
 
     //
     // Struct and Enum
@@ -170,17 +162,9 @@ contract ClearingHouse is
         mapping(address => Position) positionMap;
     }
 
-    // Used for retrieving open positions when checking for undercollateralized positions
-    struct PositionId {
-        address trader;
-        IAmm amm;
-        bool open;
-    }
-
     //**********************************************************//
     //    Can not change the order of below state variables     //
     //**********************************************************//
-    string public override versionRecipient;
 
     // only admin
     Decimal.decimal public initMarginRatio;
@@ -204,11 +188,10 @@ contract ClearingHouse is
     // contract dependencies
     IInsuranceFund public insuranceFund;
     IMultiTokenRewardRecipient public tollPool;
+    ICollateralMonitor public collateralMonitor;
 
     // designed for arbitragers who can hold unlimited positions. will be removed after guarded period
     address internal whitelist;
-
-    PositionId[] positionIds;
 
     Decimal.decimal public partialLiquidationRatio;
 
@@ -235,24 +218,18 @@ contract ClearingHouse is
         uint256 _liquidationFeeRatio,
         IInsuranceFund _insuranceFund,
         IMultiTokenRewardRecipient _tollPool
-    )
-        public
-        //address _trustedForwarder
-        initializer
-    {
-        require(address(_insuranceFund) != address(0), "Invalid IInsuranceFund");
+    ) public initializer {
+        require(address(_insuranceFund) != address(0), "Invalid InsuranceFund");
         require(address(_tollPool) != address(0), "Invalid TollPool");
 
         __OwnerPausable_init();
         __ReentrancyGuard_init();
 
-        versionRecipient = "1.0.0"; // we are not using it atm
         initMarginRatio = Decimal.decimal(_initMarginRatio);
         maintenanceMarginRatio = Decimal.decimal(_maintenanceMarginRatio);
         liquidationFeeRatio = Decimal.decimal(_liquidationFeeRatio);
         insuranceFund = _insuranceFund;
         tollPool = _tollPool;
-        //trustedForwarder = _trustedForwarder;
     }
 
     //
@@ -297,6 +274,14 @@ contract ClearingHouse is
     }
 
     /**
+     * @notice set address of collateral monitor for position tracking
+     * @dev only owner can call
+     */
+    function setCollateralMonitor(address _collateralMonitor) external onlyOwner {
+        collateralMonitor = ICollateralMonitor(_collateralMonitor);
+    }
+
+    /**
      * @notice set backstop liquidity provider
      * @dev only owner can call
      * @param account provider address
@@ -312,7 +297,7 @@ contract ClearingHouse is
      * @dev only owner can call
      */
     function setPartialLiquidationRatio(Decimal.decimal memory _ratio) external onlyOwner {
-        require(_ratio.cmp(Decimal.one()) <= 0, "invalid partial liquidation ratio");
+        require(_ratio.cmp(Decimal.one()) <= 0, "invalid PLR");
         partialLiquidationRatio = _ratio;
     }
 
@@ -361,7 +346,7 @@ contract ClearingHouse is
             SignedDecimal.signedDecimal memory fundingPayment,
             SignedDecimal.signedDecimal memory latestCumulativePremiumFraction
         ) = calcRemainMarginWithFundingPayment(_amm, position, marginDelta);
-        require(badDebt.toUint() == 0, "margin is not enough");
+        require(badDebt.toUint() == 0, "Not enough margin");
         position.margin = remainMargin;
         position.lastUpdatedCumulativePremiumFraction = latestCumulativePremiumFraction;
 
@@ -370,7 +355,7 @@ contract ClearingHouse is
         // We don't allow unrealized PnL to support their margin removal
         require(
             calcFreeCollateral(_amm, trader, remainMargin.subD(badDebt)).toInt() >= 0,
-            "free collateral is not enough"
+            "not enough free collateral"
         );
 
         setPosition(_amm, trader, position);
@@ -467,7 +452,8 @@ contract ClearingHouse is
         requireAmm(_amm, true);
         IERC20 quoteToken = _amm.quoteAsset();
         requireValidTokenAmount(quoteToken, _quoteAssetAmount);
-        requireNonZeroInput(_leverage);
+        //requireNonZeroInput(_leverage);
+        require(_leverage.toUint() != 0, "input is 0");
         requireMoreMarginRatio(MixedDecimal.fromDecimal(Decimal.one()).divD(_leverage), initMarginRatio, true);
         requireNotRestrictionMode(_amm);
 
@@ -501,7 +487,7 @@ contract ClearingHouse is
 
             // update the position state
             setPosition(_amm, trader, positionResp.position);
-            setPositionId(_amm, trader);
+            collateralMonitor.setPositionId(_amm, trader);
             // if opening the exact position size as the existing one == closePosition, can skip the margin ratio check
             if (!isNewPosition && positionResp.position.size.toInt() != 0) {
                 requireMoreMarginRatio(getMarginRatio(_amm, trader), maintenanceMarginRatio, true);
@@ -591,8 +577,8 @@ contract ClearingHouse is
 
             // add scope for stack too deep error
             // transfer the actual token from trader and vault
-            IERC20 quoteToken = _amm.quoteAsset();
-            withdraw(quoteToken, trader, positionResp.marginToVault.abs());
+            //IERC20 quoteToken = _amm.quoteAsset();
+            withdraw(_amm.quoteAsset(), trader, positionResp.marginToVault.abs());
         }
 
         // calculate fee and transfer token for fees
@@ -618,6 +604,7 @@ contract ClearingHouse is
         );
     }
 
+    /*
     function liquidateWithSlippage(
         IAmm _amm,
         address _trader,
@@ -631,14 +618,14 @@ contract ClearingHouse is
             : _quoteAssetAmountLimit;
 
         if (position.size.toInt() > 0) {
-            require(quoteAssetAmount.toUint() >= quoteAssetAmountLimit.toUint(), "Less than minimal quote token");
+            require(quoteAssetAmount.toUint() >= quoteAssetAmountLimit.toUint(), "< min quote token");
         } else if (position.size.toInt() < 0 && quoteAssetAmountLimit.cmp(Decimal.zero()) != 0) {
-            require(quoteAssetAmount.toUint() <= quoteAssetAmountLimit.toUint(), "More than maximal quote token");
+            require(quoteAssetAmount.toUint() <= quoteAssetAmountLimit.toUint(), "> max quote token");
         }
 
         return (quoteAssetAmount, isPartialClose);
     }
-
+*/
     /**
      * @notice liquidate trader's underwater position. Require trader's margin ratio less than maintenance margin ratio
      * @dev liquidator can NOT open any positions in the same block to prevent from price manipulation.
@@ -702,7 +689,7 @@ contract ClearingHouse is
         IAmm _amm,
         address _trader,
         PnlCalcOption _pnlCalcOption
-    ) internal view returns (SignedDecimal.signedDecimal memory) {
+    ) public view returns (SignedDecimal.signedDecimal memory) {
         Position memory position = getPosition(_amm, _trader);
         requirePositionSize(position.size);
         (
@@ -783,38 +770,6 @@ contract ClearingHouse is
         }
     }
 
-    function retrieveUndercollerteralizedPositions() external view returns (PositionId[] memory) {
-        PositionId[] memory toBeLiquidated = new PositionId[](positionIds.length);
-        for (uint256 i = 0; i < positionIds.length; i++) {
-            address trader = positionIds[i].trader;
-            IAmm amm = positionIds[i].amm;
-
-            if (positionIds[i].open) {
-                SignedDecimal.signedDecimal memory marginRatio = getMarginRatio(amm, trader);
-
-                // including oracle-based margin ratio as reference price when amm is over spread limit
-                if (amm.isOverSpreadLimit()) {
-                    SignedDecimal.signedDecimal memory marginRatioBasedOnOracle = _getMarginRatioByCalcOption(
-                        amm,
-                        trader,
-                        PnlCalcOption.ORACLE
-                    );
-                    if (marginRatioBasedOnOracle.subD(marginRatio).toInt() > 0) {
-                        marginRatio = marginRatioBasedOnOracle;
-                    }
-                }
-                int256 remainingMarginRatio = marginRatio.subD(maintenanceMarginRatio).toInt();
-                if (remainingMarginRatio < 0) {
-                    PositionId memory positionX;
-                    positionX.amm = amm;
-                    positionX.trader = trader;
-                    toBeLiquidated[i] = positionX;
-                }
-            }
-        }
-        return toBeLiquidated;
-    }
-
     //
     // INTERNAL FUNCTIONS
     //
@@ -849,13 +804,7 @@ contract ClearingHouse is
             blockNumber: _blockNumber(),
             liquidityHistoryIndex: 0
         });
-        // delete position id
-        uint256 idLength = positionIds.length;
-        for (uint256 i = 0; i < idLength; i++) {
-            if (positionIds[i].amm == _amm && positionIds[i].trader == _trader) {
-                positionIds[i].open = false;
-            }
-        }
+        collateralMonitor.clearPositionId(_amm, _trader);
     }
 
     function internalLiquidate(IAmm _amm, address _trader)
@@ -1002,10 +951,12 @@ contract ClearingHouse is
         updateOpenInterestNotional(_amm, MixedDecimal.fromDecimal(_openNotional));
         // if the trader is not in the whitelist, check max position size
         if (trader != whitelist) {
-            Decimal.decimal memory maxHoldingBaseAsset = _amm.getMaxHoldingBaseAsset();
-            if (maxHoldingBaseAsset.toUint() > 0) {
+            if (_amm.getMaxHoldingBaseAsset().toUint() > 0) {
                 // total position size should be less than `positionUpperBound`
-                require(newSize.abs().cmp(maxHoldingBaseAsset) <= 0, "hit position size upper bound");
+                require(
+                    newSize.abs().cmp(Decimal.decimal(_amm.getMaxHoldingBaseAsset().toUint())) <= 0,
+                    "hit position size limit"
+                );
             }
         }
 
@@ -1099,7 +1050,7 @@ contract ClearingHouse is
                 : positionResp.unrealizedPnlAfter.addD(oldPositionNotional).subD(
                     positionResp.exchangedQuoteAssetAmount
                 );
-            require(remainOpenNotional.toInt() > 0, "value of openNotional <= 0");
+            require(remainOpenNotional.toInt() > 0, "openNotional <= 0");
 
             positionResp.position = Position(
                 oldPosition.size.addD(positionResp.exchangedPositionSize),
@@ -1128,7 +1079,7 @@ contract ClearingHouse is
         PositionResp memory closePositionResp = internalClosePosition(_amm, _trader, Decimal.zero());
 
         // the old position is underwater. trader should close a position first
-        require(closePositionResp.badDebt.toUint() == 0, "reduce an underwater position");
+        require(closePositionResp.badDebt.toUint() == 0, "reduce underwater position");
 
         // update open notional after closing position
         Decimal.decimal memory openNotional = _quoteAssetAmount.mulD(_leverage).subD(
@@ -1245,7 +1196,7 @@ contract ClearingHouse is
 
             // transfer toll to tollPool
             if (hasToll) {
-                require(address(tollPool) != address(0), "Invalid tollPool");
+                require(address(tollPool) != address(0), "No tollPool");
                 tollPool.notifyTokenAmount(quoteAsset, toll);
                 _transferFrom(quoteAsset, _from, address(tollPool), toll);
             }
@@ -1316,21 +1267,6 @@ contract ClearingHouse is
                 require(updatedOpenInterestNotional.toUint() <= cap || _msgSender() == whitelist, "over limit");
             }
             openInterestNotionalMap[ammAddr] = updatedOpenInterestNotional.abs();
-        }
-    }
-
-    function setPositionId(IAmm _amm, address _trader) private {
-        uint256 idLength = positionIds.length;
-        for (uint256 i = 0; i < idLength; i++) {
-            if (positionIds[i].amm == _amm && positionIds[i].trader == _trader) {
-                positionIds[i].open = true;
-            } else {
-                PositionId memory position;
-                position.amm = _amm;
-                position.trader = _trader;
-                position.open = true;
-                positionIds.push(position);
-            }
         }
     }
 
@@ -1434,15 +1370,16 @@ contract ClearingHouse is
         spotPrice = _amm.getSpotPrice().toUint();
     }
 
+    /*
     function getUnadjustedPosition(IAmm _amm, address _trader) public view returns (Position memory position) {
         position = ammMap[address(_amm)].positionMap[_trader];
     }
-
-    function _msgSender() internal view override(BaseRelayRecipient, ContextUpgradeSafe) returns (address payable) {
+*/
+    function _msgSender() internal view override(ContextUpgradeSafe) returns (address payable) {
         return super._msgSender();
     }
 
-    function _msgData() internal view override(BaseRelayRecipient, ContextUpgradeSafe) returns (bytes memory ret) {
+    function _msgData() internal view override(ContextUpgradeSafe) returns (bytes memory ret) {
         return super._msgData();
     }
 
@@ -1451,11 +1388,7 @@ contract ClearingHouse is
     //
     function requireAmm(IAmm _amm, bool _open) private view {
         require(insuranceFund.isExistedAmm(_amm), "amm not found");
-        require(_open == _amm.open(), _open ? "amm was closed" : "amm is open");
-    }
-
-    function requireNonZeroInput(Decimal.decimal memory _decimal) private pure {
-        require(_decimal.toUint() != 0, "input is 0");
+        require(_open == _amm.open(), _open ? "amm was closed" : "amm open");
     }
 
     function requirePositionSize(SignedDecimal.signedDecimal memory _size) private pure {
@@ -1467,9 +1400,9 @@ contract ClearingHouse is
     }
 
     function requireNotRestrictionMode(IAmm _amm) private view {
-        uint256 currentBlock = _blockNumber();
-        if (currentBlock == ammMap[address(_amm)].lastRestrictionBlock) {
-            require(getPosition(_amm, _msgSender()).blockNumber != currentBlock, "only one action allowed");
+        //uint256 currentBlock = _blockNumber();
+        if (_blockNumber() == ammMap[address(_amm)].lastRestrictionBlock) {
+            require(getPosition(_amm, _msgSender()).blockNumber != _blockNumber(), "only one action allowed");
         }
     }
 

@@ -43,8 +43,9 @@ contract ClearingHouseViewer {
         address _trader,
         ClearingHouse.PnlCalcOption _pnlCalcOption
     ) external view returns (SignedDecimal.signedDecimal memory) {
-        (, SignedDecimal.signedDecimal memory unrealizedPnl) =
-            (clearingHouse.getPositionNotionalAndUnrealizedPnl(_amm, _trader, _pnlCalcOption));
+        (, SignedDecimal.signedDecimal memory unrealizedPnl) = (
+            clearingHouse.getPositionNotionalAndUnrealizedPnl(_amm, _trader, _pnlCalcOption)
+        );
         return unrealizedPnl;
     }
 
@@ -82,10 +83,9 @@ contract ClearingHouseViewer {
         returns (ClearingHouse.Position memory position)
     {
         position = clearingHouse.getPosition(_amm, _trader);
-        SignedDecimal.signedDecimal memory marginWithFundingPayment =
-            MixedDecimal.fromDecimal(position.margin).addD(
-                getFundingPayment(position, clearingHouse.getLatestCumulativePremiumFraction(_amm))
-            );
+        SignedDecimal.signedDecimal memory marginWithFundingPayment = MixedDecimal.fromDecimal(position.margin).addD(
+            getFundingPayment(position, clearingHouse.getLatestCumulativePremiumFraction(_amm))
+        );
         position.margin = marginWithFundingPayment.toInt() >= 0 ? marginWithFundingPayment.abs() : Decimal.zero();
     }
 
@@ -95,6 +95,8 @@ contract ClearingHouseViewer {
      * @param _trader trader address
      * @return true if trader's position is not at the latest Amm curve, otherwise is false
      */
+
+    /*
     function isPositionNeedToBeMigrated(IAmm _amm, address _trader) external view returns (bool) {
         ClearingHouse.Position memory unadjustedPosition = clearingHouse.getUnadjustedPosition(_amm, _trader);
         if (unadjustedPosition.size.toInt() == 0) {
@@ -106,6 +108,7 @@ contract ClearingHouseViewer {
         }
         return true;
     }
+*/
 
     /**
      * @notice get personal margin ratio
@@ -128,10 +131,12 @@ contract ClearingHouseViewer {
         ClearingHouse.Position memory position = getPersonalPositionWithFundingPayment(_amm, _trader);
 
         // get trader's unrealized PnL and choose the least beneficial one for the trader
-        (Decimal.decimal memory spotPositionNotional, SignedDecimal.signedDecimal memory spotPricePnl) =
-            (clearingHouse.getPositionNotionalAndUnrealizedPnl(_amm, _trader, ClearingHouse.PnlCalcOption.SPOT_PRICE));
-        (Decimal.decimal memory twapPositionNotional, SignedDecimal.signedDecimal memory twapPricePnl) =
-            (clearingHouse.getPositionNotionalAndUnrealizedPnl(_amm, _trader, ClearingHouse.PnlCalcOption.TWAP));
+        (Decimal.decimal memory spotPositionNotional, SignedDecimal.signedDecimal memory spotPricePnl) = (
+            clearingHouse.getPositionNotionalAndUnrealizedPnl(_amm, _trader, ClearingHouse.PnlCalcOption.SPOT_PRICE)
+        );
+        (Decimal.decimal memory twapPositionNotional, SignedDecimal.signedDecimal memory twapPricePnl) = (
+            clearingHouse.getPositionNotionalAndUnrealizedPnl(_amm, _trader, ClearingHouse.PnlCalcOption.TWAP)
+        );
 
         SignedDecimal.signedDecimal memory unrealizedPnl;
         Decimal.decimal memory positionNotional;
@@ -141,14 +146,14 @@ contract ClearingHouseViewer {
 
         // min(margin + funding, margin + funding + unrealized PnL) - position value * initMarginRatio
         SignedDecimal.signedDecimal memory accountValue = unrealizedPnl.addD(position.margin);
-        SignedDecimal.signedDecimal memory minCollateral =
-            accountValue.subD(position.margin).toInt() > 0 ? MixedDecimal.fromDecimal(position.margin) : accountValue;
+        SignedDecimal.signedDecimal memory minCollateral = accountValue.subD(position.margin).toInt() > 0
+            ? MixedDecimal.fromDecimal(position.margin)
+            : accountValue;
 
         Decimal.decimal memory initMarginRatio = Decimal.decimal(clearingHouse.initMarginRatio());
-        SignedDecimal.signedDecimal memory marginRequirement =
-            position.size.toInt() > 0
-                ? MixedDecimal.fromDecimal(position.openNotional).mulD(initMarginRatio)
-                : MixedDecimal.fromDecimal(positionNotional).mulD(initMarginRatio);
+        SignedDecimal.signedDecimal memory marginRequirement = position.size.toInt() > 0
+            ? MixedDecimal.fromDecimal(position.openNotional).mulD(initMarginRatio)
+            : MixedDecimal.fromDecimal(positionNotional).mulD(initMarginRatio);
 
         return minCollateral.subD(marginRequirement);
     }

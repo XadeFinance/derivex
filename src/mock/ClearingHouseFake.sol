@@ -14,20 +14,21 @@ contract ClearingHouseFake is ClearingHouse {
         uint256 _initMarginRatio,
         uint256 _maintenanceMarginRatio,
         uint256 _liquidationFeeRatio,
-        IInsuranceFund _insuranceFund,
-        address _trustedForwarder
-    ) external initializer {
+        IInsuranceFund _insuranceFund
+    )
+        external
+        //
+        initializer
+    {
         require(address(_insuranceFund) != address(0), "Invalid IInsuranceFund");
 
         __OwnerPausable_init();
         __ReentrancyGuard_init();
 
-        versionRecipient = "1.0.0"; // we are not using it atm
         initMarginRatio = Decimal.decimal(_initMarginRatio);
         maintenanceMarginRatio = Decimal.decimal(_maintenanceMarginRatio);
         liquidationFeeRatio = Decimal.decimal(_liquidationFeeRatio);
         insuranceFund = _insuranceFund;
-        trustedForwarder = _trustedForwarder;
     }
 
     function mock_setBlockTimestamp(uint256 _timestamp) public {

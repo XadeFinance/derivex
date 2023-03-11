@@ -7,6 +7,7 @@ import "@typechain/hardhat"
 import "@typechain/ethers-v5"
 import "ethers"
 import "dotenv/config"
+import "hardhat-contract-sizer"
 // need to write a open zeppelin's proxyResolver if using any deployProxy in test case
 // https://github.com/cgewecke/eth-gas-reporter/blob/master/docs/advanced.md
 import "hardhat-gas-reporter"
@@ -35,29 +36,31 @@ const config: HardhatUserConfig = {
         coverage: {
             url: COVERAGE_URL,
         },
-        Mumbai: {
+        PolygonPoS: {
             url: POLYGONPoS_URL,
             gasPrice: GAS_PRICE,
-            accounts : [process.env.ALFA_PRIVATEKEY || ""],
+            accounts : [POLYGONPoS_MNEMONIC ],
         },
-        PolygonPoS: {
+        Mumbai: {
             url: MUMBAI_URL,
             gasPrice: GAS_PRICE,
-            accounts: {
-                mnemonic: MUMBAI_MNEMONIC,
-            },
+            accounts: [ MUMBAI_MNEMONIC ],
         },
         alfajores: {
-            url: process.env.ALFA_INFURA_KEY,
+            url: ALFAJORES_URL,
             gasPrice : GAS_PRICE,
-            accounts : [process.env.ALFA_PRIVATEKEY || ""]
+            accounts : [ ALFAJORES_MNEMONIC ]
         },
     },
     solidity: {
         //version: "0.6.9",
         compilers: [
             {
-              version: "0.6.9"
+              version: "0.6.9",
+              settings: {
+                optimizer: { enabled: true, runs: 200 },
+                evmVersion: "istanbul",
+            },
             },
         ],
         settings: {
@@ -86,10 +89,18 @@ const config: HardhatUserConfig = {
         // Obtain one at https://etherscan.io/
         apiKey: ETHERSCAN_API_KEY,
     },
+
+    contractSizer: {
+        alphaSort: true,
+        disambiguatePaths: false,
+        runOnCompile: true,
+        strict: true,
+        only: [':ClearingHouse$', ':Amm$'],
+      }
     
 }
 
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
+task("accounts", "Prints the list of accounts", async (taskArgs: any, hre: any) => {
     const accounts = await hre.ethers.getSigners();
   
     for (const account of accounts) {
