@@ -353,10 +353,30 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
         // check enough margin (same as the way Curie calculates the free collateral)
         // Use a more conservative way to restrict traders to remove their margin
         // We don't allow unrealized PnL to support their margin removal
-        require(
-            calcFreeCollateral(_amm, trader, remainMargin.subD(badDebt)).toInt() >= 0,
-            "not enough free collateral"
-        );
+        SignedDecimal.signedDecimal memory freeCollateral;
+        {
+            Position memory pos = getPosition(_amm, trader);
+            (
+                SignedDecimal.signedDecimal memory unrealizedPnl,
+                Decimal.decimal memory positionNotional
+            ) = getPreferencePositionNotionalAndUnrealizedPnl(_amm, trader, PnlPreferenceOption.MIN_PNL);
+
+            // min(margin + funding, margin + funding + unrealized PnL) - position value * initMarginRatio
+            SignedDecimal.signedDecimal memory accountValue = unrealizedPnl.addD(remainMargin.subD(badDebt));
+            SignedDecimal.signedDecimal memory minCollateral = unrealizedPnl.toInt() > 0
+                ? MixedDecimal.fromDecimal(remainMargin.subD(badDebt))
+                : accountValue;
+
+            // margin requirement
+            // if holding a long position, using open notional (mapping to quote debt in Curie)
+            // if holding a short position, using position notional (mapping to base debt in Curie)
+            SignedDecimal.signedDecimal memory marginRequirement = pos.size.toInt() > 0
+                ? MixedDecimal.fromDecimal(pos.openNotional).mulD(initMarginRatio)
+                : MixedDecimal.fromDecimal(positionNotional).mulD(initMarginRatio);
+
+            freeCollateral = minCollateral.subD(marginRequirement);
+        }
+        require(freeCollateral.toUint() >= 0, "not enough free collateral");
 
         setPosition(_amm, trader, position);
 
@@ -369,6 +389,7 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
      * @notice settle all the positions when amm is shutdown. The settlement price is according to IAmm.settlementPrice
      * @param _amm IAmm address
      */
+    /*
     function settlePosition(IAmm _amm) external nonReentrant {
         // check condition
         requireAmm(_amm, false);
@@ -403,7 +424,7 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
         // emit event
         emit PositionSettled(address(_amm), trader, settledValue.toUint());
     }
-
+*/
     // if increase position
     //   marginToVault = addMargin
     //   marginDiff = realizedFundingPayment + realizedPnl(0)
@@ -452,7 +473,6 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
         requireAmm(_amm, true);
         IERC20 quoteToken = _amm.quoteAsset();
         requireValidTokenAmount(quoteToken, _quoteAssetAmount);
-        //requireNonZeroInput(_leverage);
         require(_leverage.toUint() != 0, "input is 0");
         requireMoreMarginRatio(MixedDecimal.fromDecimal(Decimal.one()).divD(_leverage), initMarginRatio, true);
         requireNotRestrictionMode(_amm);
@@ -773,13 +793,13 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
     //
     // INTERNAL FUNCTIONS
     //
-
+    /*
     function enterRestrictionMode(IAmm _amm) internal {
         uint256 blockNumber = _blockNumber();
         ammMap[address(_amm)].lastRestrictionBlock = blockNumber;
         emit RestrictionModeEntered(address(_amm), blockNumber);
     }
-
+*/
     function setPosition(
         IAmm _amm,
         address _trader,
@@ -889,7 +909,16 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
                 // transfer the actual token between trader and vault
                 if (totalBadDebt.toUint() > 0) {
                     require(backstopLiquidityProviderMap[_msgSender()], "not backstop LP");
-                    realizeBadDebt(quoteAsset, totalBadDebt);
+                    // realizeBadDebt
+                    Decimal.decimal memory badDebtBalance = prepaidBadDebt[address(quoteAsset)];
+                    if (badDebtBalance.toUint() > totalBadDebt.toUint()) {
+                        // no need to move extra tokens because vault already prepay bad debt, only need to update the numbers
+                        prepaidBadDebt[address(quoteAsset)] = badDebtBalance.subD(totalBadDebt);
+                    } else {
+                        // in order to realize all the bad debt vault need extra tokens from insuranceFund
+                        insuranceFund.withdraw(quoteAsset, totalBadDebt.subD(badDebtBalance));
+                        prepaidBadDebt[address(quoteAsset)] = Decimal.zero();
+                    }
                 }
                 if (remainMargin.toUint() > 0) {
                     feeToInsuranceFund = remainMargin;
@@ -900,7 +929,9 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
                 transferToInsuranceFund(quoteAsset, feeToInsuranceFund);
             }
             withdraw(quoteAsset, _msgSender(), feeToLiquidator);
-            enterRestrictionMode(_amm);
+            uint256 blockNumber = _blockNumber();
+            ammMap[address(_amm)].lastRestrictionBlock = blockNumber;
+            emit RestrictionModeEntered(address(_amm), blockNumber);
 
             emit PositionLiquidated(
                 _trader,
@@ -1226,6 +1257,8 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
         _transfer(_token, _receiver, _amount);
     }
 
+    /*
+    //inlined
     function realizeBadDebt(IERC20 _token, Decimal.decimal memory _badDebt) internal {
         Decimal.decimal memory badDebtBalance = prepaidBadDebt[address(_token)];
         if (badDebtBalance.toUint() > _badDebt.toUint()) {
@@ -1237,7 +1270,7 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
             prepaidBadDebt[address(_token)] = Decimal.zero();
         }
     }
-
+*/
     function transferToInsuranceFund(IERC20 _token, Decimal.decimal memory _amount) internal {
         Decimal.decimal memory totalTokenBalance = _balanceOf(_token, address(this));
         _transfer(
@@ -1309,6 +1342,8 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
         }
     }
 
+    /*
+    //Inlined
     /// @param _marginWithFundingPayment margin + funding payment - bad debt
     function calcFreeCollateral(
         IAmm _amm,
@@ -1336,7 +1371,7 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
 
         return minCollateral.subD(marginRequirement);
     }
-
+*/
     function getPreferencePositionNotionalAndUnrealizedPnl(
         IAmm _amm,
         address _trader,

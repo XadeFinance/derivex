@@ -57,7 +57,9 @@ contract ClearingHouseFake is ClearingHouse {
     }
 
     function mockSetRestrictionMode(IAmm _amm) external {
-        enterRestrictionMode(_amm);
+        uint256 blockNumber = _blockNumber();
+        ammMap[address(_amm)].lastRestrictionBlock = blockNumber;
+        emit RestrictionModeEntered(address(_amm), blockNumber);
     }
 
     function isInRestrictMode(address _amm, uint256 _block) external view returns (bool) {
