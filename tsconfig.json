@@ -36,6 +36,8 @@
         "./node_modules/@nomiclabs/hardhat-ethers/src/type-extensions.d.ts",
         "./node_modules/@openzeppelin/hardhat-upgrades/src/type-extensions.d.ts",
         "./constants.ts",
-        "./deployedAdd.json"
+        "./deployedAdd.json",
+        "./price.ts",
+        "./priceFeedETH.ts"
     ]
 }

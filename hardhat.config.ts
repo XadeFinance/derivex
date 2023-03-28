@@ -90,13 +90,13 @@ const config: HardhatUserConfig = {
         apiKey: ETHERSCAN_API_KEY,
     },
 
-    contractSizer: {
-        alphaSort: true,
-        disambiguatePaths: false,
-        runOnCompile: true,
-        strict: true,
-        only: [':ClearingHouse$', ':Amm$'],
-      }
+    // contractSizer: {
+    //     alphaSort: true,
+    //     disambiguatePaths: false,
+    //     runOnCompile: true,
+    //     strict: true,
+    //     only: [':ClearingHouse$', ':Amm$'],
+    //   }
     
 }
 
