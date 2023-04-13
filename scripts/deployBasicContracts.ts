@@ -8,11 +8,13 @@ async function getImplementation(proxyAddr: string) {
 
 async function main(){
 
- const feePool = await ethers.getContractFactory("PriceFeedL2");
- const FeePool = await upgrades.deployProxy(feePool, {initializer : "initialize" });
- await FeePool.deployed();
+ const chainlinkL1 = await ethers.getContractFactory("ChainlinkL1");
+ const ChainlinkL1 = await upgrades.deployProxy(chainlinkL1, ["0x6eA65716AD03884D84A908A9c13149eCADB03059"], {initializer : "initialize" });
+ await ChainlinkL1.deployed();
 
- console.log(FeePool.address);
+ const impAddr = await getImplementation(ChainlinkL1.address);
+ console.log("Implementation address", impAddr);
+ console.log("Proxy address", ChainlinkL1.address);
 
 
 }

@@ -12,7 +12,7 @@ async function main(){
  const InsuranceFund = await upgrades.deployProxy(insurancefund, {initializer : "initialize" });
  await InsuranceFund.deployed();
 
- const impAddr = getImplementation(InsuranceFund.address);
+ const impAddr = await getImplementation(InsuranceFund.address);
  console.log("Implementation address", impAddr);
  console.log("Proxy address", InsuranceFund.address);
 
