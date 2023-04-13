@@ -474,6 +474,7 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
         IERC20 quoteToken = _amm.quoteAsset();
         requireValidTokenAmount(quoteToken, _quoteAssetAmount);
         require(_leverage.toUint() != 0, "input is 0");
+        require(address(collateralMonitor) != address(0), "collateral monitor not set");
         requireMoreMarginRatio(MixedDecimal.fromDecimal(Decimal.one()).divD(_leverage), initMarginRatio, true);
         requireNotRestrictionMode(_amm);
 
@@ -800,11 +801,7 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
         emit RestrictionModeEntered(address(_amm), blockNumber);
     }
 */
-    function setPosition(
-        IAmm _amm,
-        address _trader,
-        Position memory _position
-    ) internal {
+    function setPosition(IAmm _amm, address _trader, Position memory _position) internal {
         Position storage positionStorage = ammMap[address(_amm)].positionMap[_trader];
         positionStorage.size = _position.size;
         positionStorage.margin = _position.margin;
@@ -827,10 +824,10 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
         collateralMonitor.clearPositionId(_amm, _trader);
     }
 
-    function internalLiquidate(IAmm _amm, address _trader)
-        internal
-        returns (Decimal.decimal memory quoteAssetAmount, bool isPartialClose)
-    {
+    function internalLiquidate(
+        IAmm _amm,
+        address _trader
+    ) internal returns (Decimal.decimal memory quoteAssetAmount, bool isPartialClose) {
         requireAmm(_amm, true);
         SignedDecimal.signedDecimal memory marginRatio = getMarginRatio(_amm, _trader);
 
@@ -1237,11 +1234,7 @@ contract ClearingHouse is DecimalERC20, OwnerPausableUpgradeSafe, ReentrancyGuar
         }
     }
 
-    function withdraw(
-        IERC20 _token,
-        address _receiver,
-        Decimal.decimal memory _amount
-    ) internal {
+    function withdraw(IERC20 _token, address _receiver, Decimal.decimal memory _amount) internal {
         // if withdraw amount is larger than entire balance of vault
         // means this trader's profit comes from other under collateral position's future loss
         // and the balance of entire vault is not enough
