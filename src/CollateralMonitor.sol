@@ -19,10 +19,24 @@ contract CollateralMonitor is OwnerPausableUpgradeSafe {
         bool open;
     }
 
+    //**********************************************************//
+    //    The below state variables can not change the order    //
+    //**********************************************************//
     PositionId[] positionIds;
     ClearingHouse public clearingHouse;
 
-    constructor(ClearingHouse _clearingHouse) public {
+    uint256[50] private __gap;
+
+    //**********************************************************//
+    //    The above state variables can not change the order    //
+    //**********************************************************//
+
+    //◥◤◥◤◥◤◥◤◥◤◥◤◥◤◥◤ add state variables below ◥◤◥◤◥◤◥◤◥◤◥◤◥◤◥◤//
+
+    //◢◣◢◣◢◣◢◣◢◣◢◣◢◣◢◣ add state variables above ◢◣◢◣◢◣◢◣◢◣◢◣◢◣◢◣//
+
+    function initialize(ClearingHouse _clearingHouse) public initializer {
+        __OwnerPausable_init();
         clearingHouse = _clearingHouse;
     }
 
